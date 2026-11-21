@@ -1,174 +1,85 @@
-# SQL Part Project: Database Design Using MySQL
+# d_international – Hotel Management Database
 
-## Project Overview
+A MySQL database for **d_international**, a 5-star hotel. It stores guests, rooms, room types, reservations, payments and hotel services.
 
-In this project, you will design and create a database from scratch using MySQL.
+## Files
 
-You will choose a real-world business scenario, identify the information that needs to be stored, create the required tables, establish relationships between them, and insert sample data.
-
-The objective is to understand how real businesses organize and manage their data using relational databases.
-
-**This is an individual project.**
-
----
-
-## 1. Choose Your Business Scenario
-
-Select ONE real-world business scenario for your project.
-
-Here are some examples to help you get started:
-
-| Scenario | Possible Tables |
+| File | Description |
 |---|---|
-| Gym Management | Members, Trainers, Membership Plans, Classes, Attendance, Payments |
-| E-commerce | Customers, Products, Categories, Orders, Order Details, Payments |
-| Food Delivery | Customers, Restaurants, Menu Items, Orders, Delivery Partners, Payments |
-| Hotel Management | Guests, Rooms, Reservations, Payments, Services |
-| Logistics / Courier Service | Customers, Shipments, Branches, Delivery Partners, Tracking |
+| `d_international.sql` | Complete script: creates the database, tables, sample data and sample queries |
+| `README.md` | This document |
 
-**Important:**
-- These are only examples. You are free to choose any other business scenario.
-- You must decide the tables and columns based on your selected business.
-- Think about what information the business needs to store.
-- Do not simply copy the sample table structures.
+## How to Run
 
----
+1. Open **MySQL Workbench** and connect to your server.
+2. Go to **File → Open SQL Script** and select `d_international.sql`.
+3. Click the lightning bolt (**Execute**) to run the whole script.
+4. Refresh the schema panel to see the `d_international` database.
 
-## 2. What You Need to Do
+Requires MySQL 5.7 or later.
 
-Follow these steps to complete your project.
+## Database Design
 
-**Step 1: Plan Your Database**
-- Decide the tables required for your business.
-- Identify the columns needed in each table.
-- Decide how the tables are related to each other.
+### Tables and Columns
 
-**Step 2: Create the Database**
-- Create a new database in MySQL.
-- Create all the required tables(at least 4).
-- Choose suitable data types for every column.
+**Guests**: guest_id (PK), first_name, last_name, email (UNIQUE), phone (UNIQUE), city, id_proof_type, id_proof_number (UNIQUE)
 
-**Step 3: Apply Constraints and Relationships**
+**RoomTypes**: type_id (PK), type_name (UNIQUE), price_per_night, max_capacity, description
 
-Use appropriate constraints wherever necessary:
+**Rooms**: room_id (PK), room_number (UNIQUE), type_id (FK), floor_no, status (default 'Available')
 
-- PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE, DEFAULT, CHECK, etc.
-Make sure related tables are connected using Foreign Keys.
+**Reservations**: reservation_id (PK), guest_id (FK), room_id (FK), check_in_date, check_out_date, num_guests, status (default 'Booked')
 
-**Step 4: Insert Data**
-- Insert at least 5 records into every table.
-- Use meaningful and realistic sample data.
+**Payments**: payment_id (PK), reservation_id (FK), amount, payment_date, method, status (default 'Pending')
 
+**Services**: service_id (PK), service_name (UNIQUE), category, price
 
-**Step 5: Generate the ER Diagram**
+### Relationships
 
-Generate an Entity Relationship (ER) Diagram using MySQL Workbench.
+| Relationship | Type | Foreign Key |
+|---|---|---|
+| Guests → Reservations | One-to-many | Reservations.guest_id |
+| RoomTypes → Rooms | One-to-many | Rooms.type_id |
+| Rooms → Reservations | One-to-many | Reservations.room_id |
+| Reservations → Payments | One-to-many | Payments.reservation_id |
 
----
+`Services` is a standalone catalogue of hotel services and is not linked to another table.
 
-## 3. Database Requirements
+### Constraints Used
 
-Your database must satisfy the following conditions:
+- `PRIMARY KEY` and `AUTO_INCREMENT` on every table's ID column
+- `FOREIGN KEY` to connect related tables
+- `NOT NULL` on required columns
+- `UNIQUE` on email, phone, ID proof number, room number, room type name and service name
+- `DEFAULT` on the status columns
 
-1. Minimum 4 tables.
-2. Minimum 5 records in every table.
-3. Every table must have a suitable Primary Key.
-4. Related tables must be connected using Foreign Keys.
-5. Every column must have an appropriate data type.
-6. Use suitable constraints wherever required.
-7. Avoid unnecessary repetition of data.
-8. The complete SQL script must execute from beginning to end without errors.
+### Data Types Used
 
-**Remember:** Each fact should be stored in the appropriate place. If you are repeating the same information in multiple tables, think about whether it should be maintained in a separate table.
+`INT`, `VARCHAR`, `DECIMAL`, `DATE`
 
----
+## Sample Data
 
-## 4. Generate the ER Diagram
+| Table | Records |
+|---|---|
+| Guests | 10 |
+| RoomTypes | 5 (Deluxe, Executive, Club Suite, Royal Family Suite, Presidential Suite) |
+| Rooms | 18 |
+| Reservations | 7 |
+| Payments | 8 |
+| Services | 8 (Complimentary Breakfast, Dinner Buffet, A La Carte Dining, Spa Massage, Airport Limousine Transfer, Laundry and Pressing, Personal Butler Service, In-Room Dining) |
 
-Follow these steps in MySQL Workbench:
+Prices are in Indian Rupees (INR).
 
-1. Open MySQL Workbench.
-2. Go to **Database → Reverse Engineer**.
-3. Select your MySQL connection.
-4. Select the database you created.
-5. Continue through the wizard and click Execute.
-6. Arrange the tables neatly so that relationship lines are clearly visible.
-7. Go to **File → Export → Export as PNG**.
-8. Save the diagram as `ER_Diagram.png`.
+## Sample Queries
 
-**Important:**
-- Your ER diagram must show all the tables.
-- Relationship lines must be visible between related tables.
-- If relationship lines are missing, check whether you have correctly declared Foreign Keys.
+The end of the script includes two queries:
 
----
+1. Reservations with guest name, room number, dates and status (joins `Reservations`, `Guests` and `Rooms`).
+2. Total payments for each reservation (groups `Payments` by `reservation_id`).
 
-## 5. GitHub Submission Instructions
+## Generating the ER Diagram
 
-1. Open the original GitHub repository shared by your trainer.
-2. Click **Fork** to create your own copy.
-3. Open your forked repository.
-4. Update the `README.md` with details of your selected business scenario.
-5. Upload your SQL script (`database.sql`) and ER diagram (`ER_Diagram.png`).
-6. Commit your changes and submit your forked repository link.
-
-**Note:** Submit your own forked repository link, not the original repository link.
-
-### Your Final Repository Structure
-
-Your repository should contain the following files:
-
-```text
-SQL-Database-Design-Project/
-│
-├── README.md
-├── database.sql
-└── ER_Diagram.png
-```
-
-### What to Include in Your Modified README
-
-Update the original README to describe your own project.
-
-Include:
-
-- **Project Title:** Name of your database project.
-- **Selected Scenario:** The business or industry you selected.
-- **Project Description:** Briefly explain what your database manages.
-- **Tables Created:** Mention all the tables you designed.
-- **Relationships:** Briefly explain how the tables are connected.
-
-Do not keep the original sample scenarios as your project description. Your README must describe your own database.
-
-
-## 6. Project Review
-
-Be prepared to explain your database design.
-
-You may be asked questions such as:
-
-1. Why did you choose this business scenario?
-2. Why did you create these particular tables?
-3. Why did you choose these columns?
-4. Why did you use INT, VARCHAR, DATE or DECIMAL for specific columns?
-5. What is the purpose of a Primary Key?
-6. What is the purpose of a Foreign Key?
-7. What is the relationship between your tables?
-8. Why did you separate certain information into different tables?
-9. How does your ER diagram represent your database?
-
----
-
-## Final Instructions
-
-- This is an individual project. Work on your own.
-- Do not copy another student's database.
-- Choose a meaningful real-world business scenario.
-- Use realistic sample data.
-- Follow proper naming conventions for tables and columns.
-- Check your SQL script before submitting.
-- Make sure your ER diagram is clear and readable.
-- Update the README according to your selected business domain.
-- Be prepared to explain your database design.
-
-**The goal is not just to create tables and insert data. Understand how a real business stores and organizes its information using a relational database.**
+1. In MySQL Workbench, go to **Database → Reverse Engineer**.
+2. Select your connection and choose the `d_international` schema.
+3. Continue to the end, keeping **Place imported objects on a diagram** ticked.
+4. Arrange the tables, then export with **File → Export → Export as PNG** (or PDF).
